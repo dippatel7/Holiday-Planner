@@ -3,7 +3,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-
+const mongoose = require('mongoose');
+mongoose.set('strictQuery', false);
 dotenv.config();
 
 

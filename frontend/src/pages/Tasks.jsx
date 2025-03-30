@@ -1,40 +1,44 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '../axiosConfig';
-import TaskForm from '../components/TaskForm';
-import TaskList from '../components/TaskList';
+import HolidayForm from '../components/TaskForm';
+import HolidayList from '../components/TaskList';
 import { useAuth } from '../context/AuthContext';
 
-const Tasks = () => {
+const Holidays = () => {
   const { user } = useAuth();
-  const [tasks, setTasks] = useState([]);
-  const [editingTask, setEditingTask] = useState(null);
+  const [holidays, setHolidays] = useState([]);
+  const [editingHoliday, setEditingHoliday] = useState(null);
 
   useEffect(() => {
-    const fetchTasks = async () => {
+    const fetchHolidays = async () => {
       try {
-        const response = await axiosInstance.get('/api/tasks', {
+        const response = await axiosInstance.get('/api/holidays', {
           headers: { Authorization: `Bearer ${user.token}` },
         });
-        setTasks(response.data);
+        setHolidays(response.data);
       } catch (error) {
-        alert('Failed to fetch tasks.');
+        alert('Failed to fetch holidays.');
       }
     };
 
-    fetchTasks();
+    fetchHolidays();
   }, [user]);
 
   return (
     <div className="container mx-auto p-6">
-      <TaskForm
-        tasks={tasks}
-        setTasks={setTasks}
-        editingTask={editingTask}
-        setEditingTask={setEditingTask}
+      <HolidayForm
+        holidays={holidays}
+        setHolidays={setHolidays}
+        editingHoliday={editingHoliday}
+        setEditingHoliday={setEditingHoliday}
       />
-      <TaskList tasks={tasks} setTasks={setTasks} setEditingTask={setEditingTask} />
+      <HolidayList
+        holidays={holidays}
+        setHolidays={setHolidays}
+        setEditingHoliday={setEditingHoliday}
+      />
     </div>
   );
 };
 
-export default Tasks;
+export default Holidays;
