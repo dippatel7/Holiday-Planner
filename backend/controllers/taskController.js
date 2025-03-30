@@ -1,48 +1,65 @@
-const Task = require('../models/Task');
-const getTasks = async (req, res) => {
-try {
-const tasks = await Task.find({ userId: req.user.id });
-res.json(tasks);
-} catch (error) {
-res.status(500).json({ message: error.message }); 
-}
+const Holiday = require('../models/Holiday');
+
+// Get Holidays (Read)
+const getHolidays = async (req, res) => {
+  try {
+    const holidays = await Holiday.find({ userId: req.user.id });
+    res.json(holidays);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-const addTask = async (req, res) => {
-    const { title, description, deadline } = req.body;
-    try {
-    const task = await Task.create({ userId: req.user.id, title, description, deadline });
-    res.status(201).json(task);
-    } catch (error) {
+// Add Holiday (Create)
+const addHoliday = async (req, res) => {
+  const { name, destination, startDate, endDate, description } = req.body;
+  try {
+    const holiday = new Holiday({
+      userId: req.user.id, // Associate holiday with the current logged-in user
+      name,
+      destination,
+      startDate,
+      endDate,
+      description,
+    });
+    await holiday.save();
+    res.status(201).json(holiday); // Respond with the created holiday
+  } catch (error) {
     res.status(500).json({ message: error.message });
-    }
-    };
+  }
+};
 
-    const updateTask = async (req, res) => {
-        const { title, description, completed, deadline } = req.body;
-        try {
-        const task = await Task.findById(req.params.id);
-        if (!task) return res.status(404).json({ message: 'Task not found' });
-        task.title = title || task.title;
-        task.description = description || task.description;
-        task.completed = completed ?? task.completed;
-        task.deadline = deadline || task.deadline;
-        const updatedTask = await task.save();
-        res.json(updatedTask);
-        } catch (error) {
-        res.status(500).json({ message: error.message });
-        }
-        };
-        
-        const deleteTask = async (req, res) => {
-            try {
-            const task = await Task.findById(req.params.id);
-            if (!task) return res.status(404).json({ message: 'Task not found' });
-            await task.remove();
-            res.json({ message: 'Task deleted' });
-            } catch (error) {
-            res.status(500).json({ message: error.message });
-            }
-            };
-            module.exports = { getTasks, addTask, updateTask, deleteTask };
+// Update Holiday (Update)
+const updateHoliday = async (req, res) => {
+  const { name, destination, startDate, endDate, description } = req.body;
+  try {
+    const holiday = await Holiday.findById(req.params.id);
+    if (!holiday) return res.status(404).json({ message: 'Holiday not found' });
+    
+    holiday.name = name || holiday.name;
+    holiday.destination = destination || holiday.destination;
+    holiday.startDate = startDate || holiday.startDate;
+    holiday.endDate = endDate || holiday.endDate;
+    holiday.description = description || holiday.description;
+    
+    await holiday.save();
+    res.json(holiday);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
+// Delete Holiday (Delete)
+const deleteHoliday = async (req, res) => {
+  try {
+    const holiday = await Holiday.findById(req.params.id);
+    if (!holiday) return res.status(404).json({ message: 'Holiday not found' });
+    
+    await holiday.remove();
+    res.json({ message: 'Holiday deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { getHolidays, addHoliday, updateHoliday, deleteHoliday };
