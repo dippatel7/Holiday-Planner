@@ -1,26 +1,123 @@
-**Task Manager Application Overview:The task manager application is designed to help users efficiently manage their tasks and responsibilities by providing a user-friendly interface for creating, viewing, updating, and deleting tasks. It includes essential features such as secure user authentication, allowing individuals to sign up and log in to their accounts, as well as profile management to update personal information. With built-in validation such as input field validation and email validation, the application ensures a seamless user experience while enhancing productivity and organization in both personal and professional settings. **
+# Holiday Planner
 
-**This apps **contain** the following features:**
+A web-based application to help travelers plan and manage personalized holiday itineraries efficiently. Built with React, Node.js, MongoDB, and integrated with Jira for project management, SysML for requirements analysis, and GitHub for version control.
 
-* Signup
-* Login
-* Logout
-* Update profile
-* Add tasks
-* View tasks
-* Update tasks
-* Delete tasks
 
-**This **app**lication** is**almost **a** precompiled** app**. However, students will develop some features,**such as adding tasks, viewing tasks, updating tasks, and **deleting** tasks**. **Students** will interact with GitHub when they develop the features.**
+## Project Overview
+The **Holiday Planner** is a full-stack CRUD application designed to simplify holiday planning. Users can sign up, log in, create and manage trip itineraries, update profiles, and explore destination recommendations. This project follows Software Development Life Cycle (SDLC) best practices, leveraging Agile methodologies with Jira, requirements modeling with SysML, and DevOps practices with GitHub.
+
+**GitHub Repository**: https://github.com/dippatel7/Holiday-Planner.git 
+**Deployed URL**: [http://[13.236.135.130](https://github.com/dippatel7/Holiday-Planner.git)/](http://[13.236.135.130](https://github.com/dippatel7/Holiday-Planner.git)/)
 
 ---
 
-**Prerequisite:** Please install the following software and create account in following web tools** **
-
-* **Nodejs [**[https://nodejs.org/en](https://nodejs.org/en)]** **
-* **Git [**[https://git-scm.com/](https://git-scm.com/)]** **
-* **VS code editor** [[https://code.visualstudio.com/](https://code.visualstudio.com/)]** **
-* **MongoDB Account** [[https://account.mongodb.com/account/login](https://account.mongodb.com/account/login)]** - In tutorial, we have also showed how can you create account and database: follow step number 2.**
-* **GitHub Account** [[https://github.com/signup?source=login](https://github.com/signup?source=login)]** **
+## Features
+- **User Authentication**: Secure signup, login, and logout using JWT tokens (R001–R003).
+- **Trip Management**: Create, view, update, and delete trip itineraries with details like destination and dates (R004–R007).
+- **Profile Management**: Update personal information (R008).
+- **Destination Recommendations**: Explore suggested destinations and details (R009–R010).
+- **Itinerary Sharing**: Share plans via email or export as PDF (R011–R012, in progress).
+- **Responsive Design**: Modern, travel-themed navbar with Tailwind CSS.
 
 ---
+
+## Prerequisites
+Before running the project, ensure you have:
+- **Node.js**: Version 22 ([Download](https://nodejs.org/en))
+- **Git**: Version control tool ([Download](https://git-scm.com/))
+- **VS Code**: Recommended editor ([Download](https://code.visualstudio.com/))
+- **MongoDB Atlas Account**: For database hosting ([Sign Up](https://account.mongodb.com/account/login))
+- **GitHub Account**: For version control ([Sign Up](https://github.com/signup))
+
+---
+
+## Installation
+
+### 1. Clone the Repository
+```bash
+https://github.com/dippatel7/Holiday-Planner.git
+```
+
+### 2. Install Dependencies
+- For both frontend and backend:
+  ```bash
+  npm run install-all
+  ```
+
+### 3. Set Up Environment Variables
+- In the `backend` folder, create a `.env` file:
+  ```plaintext
+  MONGO_URI=mongodb+srv://Deep123:Deep123@cluster0.uqdsnba.mongodb.net/holidayplanner?retryWrites=true&w=majority&appName=Cluster0
+  JWT_SECRET=2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
+  PORT=5001
+
+  ```
+
+
+### 4. Run the Application
+- Start both frontend and backend:
+  ```bash
+  npm start
+  ```
+- Frontend runs at: [http://3.27.64.125:3000](http://3.27.64.125:3000)
+- Backend APIs accessible at: [http://3.27.64.125:5001](http://3.27.64.125:5001)
+
+---
+
+## Usage
+1. **Register**: Create an account at `/register`.
+2. **Login**: Sign in at `/login` to access features.
+3. **Manage Trips**: Navigate to `/trips` to create, view, update, or delete itineraries.
+4. **Explore Destinations**: Visit `/destinations` for travel suggestions (in progress).
+5. **Update Profile**: Edit your info at `/profile`.
+6. **Logout**: Sign out from the navbar.
+
+---
+
+## Project Management
+
+### Jira
+- **Structure**: Organized into 5 epics:
+  1. User Login and Signup
+  2. Trip Planning
+  3. Profile Settings
+  4. Destination Recommendations
+  5. Itinerary Sharing
+- **Sprints**: Managed via Scrum with a board (To Do, In Progress, Done).
+- **Tasks**: Broken into stories (e.g., "Create a New Trip") and subtasks (e.g., "Design trip form UI").
+
+### SysML Requirements Diagram
+- **Functional Requirements**:
+  - R001–R003: Authentication (Signup, Login, Logout)
+  - R004–R007: Trip CRUD operations
+  - R008: Profile updates
+  - R009–R010: Destination features
+  - R011–R012: Sharing options
+- **Non-Functional Requirements**: Security, usability, performance, availability, scalability.
+- **Relationships**: Includes "depends on" (e.g., R002 → R001), "verifies" (e.g., Test Case → R002).
+
+---
+
+## Contributing
+1. Fork the repository.
+2. Create a feature branch:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. Commit changes:
+   ```bash
+   git commit -m "Add your feature"
+   ```
+4. Push to GitHub:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+5. Open a Pull Request for review.
+
+
+## Author
+- **Name**: Dipkumar Sanjaykumar Patel
+- **Student ID**: N12128201
+- **Email**: deeppatel3179@gmail.com
+- **GitHub**: https://github.com/dippatel7/Holiday-Planner.git
+
