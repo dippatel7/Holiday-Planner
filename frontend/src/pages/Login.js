@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -6,15 +6,22 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if user is logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/trips');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
       await login(email, password);
-      navigate('/trips');
+      // Navigation handled by useEffect after user state updates
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     }
