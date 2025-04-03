@@ -11,26 +11,55 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-bold">Holiday Planner</Link>
-      <div>
+    <nav className="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
+      <Link to="/" className="text-2xl font-bold hover:text-blue-200 transition duration-200">
+        Holiday Planner
+      </Link>
+      <div className="flex items-center space-x-4">
         {user ? (
           <>
-            <Link to="/holidays" className="mr-4">My Holidays</Link>
-            <Link to="/profile" className="mr-4">Profile</Link>
+            <Link
+              to="/trips"
+              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
+            >
+              My Trips
+            </Link>
+            <Link
+              to="/destinations"
+              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
+            >
+              Destinations
+            </Link>
+            <Link
+              to="/share"
+              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
+            >
+              Share Plans
+            </Link>
+            <Link
+              to="/profile"
+              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
+            >
+              Profile
+            </Link>
             <button
               onClick={handleLogout}
-              className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
+              className="bg-red-500 px-4 py-2 rounded hover:bg-red-700 text-lg font-medium transition duration-200"
             >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="mr-4">Login</Link>
+            <Link
+              to="/login"
+              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
+            >
+              Login
+            </Link>
             <Link
               to="/register"
-              className="bg-green-500 px-4 py-2 rounded hover:bg-green-700"
+              className="bg-green-500 px-4 py-2 rounded hover:bg-green-700 text-lg font-medium transition duration-200"
             >
               Register
             </Link>
