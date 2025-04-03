@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
-    setUser(data.user);
+    setUser(data.user); // Ensure user state is set
     setToken(data.token);
     localStorage.setItem('token', data.token);
   };
