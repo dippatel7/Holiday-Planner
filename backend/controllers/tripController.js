@@ -1,4 +1,14 @@
-const Trip = require('../models/Trip'); // Renamed model to Trip for consistency
+const Trip = require('../models/Trip');
+const nodemailer = require('nodemailer'); // For email sharing
+
+// Configure Nodemailer (replace with your email service credentials)
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Example: use Gmail; adjust for your provider
+  auth: {
+    user: process.env.EMAIL_USER, // Add to .env
+    pass: process.env.EMAIL_PASS, // Add to .env
+  },
+});
 
 // Get all trips for the logged-in user (R005: View Trips)
 const getTrips = async (req, res) => {
@@ -14,20 +24,19 @@ const getTrips = async (req, res) => {
 const addTrip = async (req, res) => {
   const { name, destination, startDate, endDate, description } = req.body;
   try {
-    // Validate required fields
     if (!destination || !startDate || !endDate) {
       return res.status(400).json({ message: 'Destination, startDate, and endDate are required' });
     }
     const trip = new Trip({
-      userId: req.user.id, // Associate with the current logged-in user
-      name: name || 'Untitled Trip', // Default name if not provided
+      userId: req.user.id,
+      name: name || 'Untitled Trip',
       destination,
       startDate,
       endDate,
-      description: description || '', // Optional field with default
+      description: description || '',
     });
     const savedTrip = await trip.save();
-    res.status(201).json(savedTrip); // Respond with the created trip
+    res.status(201).json(savedTrip);
   } catch (error) {
     res.status(500).json({ message: 'Error creating trip', error: error.message });
   }
@@ -41,7 +50,6 @@ const updateTrip = async (req, res) => {
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-    // Authorization check
     if (trip.userId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to update this trip' });
     }
@@ -64,15 +72,52 @@ const deleteTrip = async (req, res) => {
     if (!trip) {
       return res.status(404).json({ message: 'Trip not found' });
     }
-    // Authorization check
     if (trip.userId.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized to delete this trip' });
     }
-    await Trip.deleteOne({ _id: req.params.id }); // Updated to deleteOne
+    await Trip.deleteOne({ _id: req.params.id });
     res.status(200).json({ message: 'Trip deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting trip', error: error.message });
   }
 };
 
-module.exports = { getTrips, addTrip, updateTrip, deleteTrip };
+// Share a trip via email (R011: Share Itinerary via Email)
+const shareTrip = async (req, res) => {
+  const { tripId, email } = req.body;
+  try {
+    if (!tripId || !email) {
+      return res.status(400).json({ message: 'Trip ID and email are required' });
+    }
+    const trip = await Trip.findById(tripId);
+    if (!trip) {
+      return res.status(404).json({ message: 'Trip not found' });
+    }
+    if (trip.userId.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Unauthorized to share this trip' });
+    }
+
+    // Email content
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: `Holiday Planner: Your Trip to ${trip.destination}`,
+      text: `
+        Hi there,
+        Here’s a trip itinerary shared with you:
+        - Destination: ${trip.destination}
+        - Dates: ${new Date(trip.startDate).toLocaleDateString()} to ${new Date(trip.endDate).toLocaleDateString()}
+        - Description: ${trip.description || 'No description provided'}
+        
+        Plan your next adventure with Holiday Planner!
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Trip shared successfully via email' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error sharing trip', error: error.message });
+  }
+};
+
+module.exports = { getTrips, addTrip, updateTrip, deleteTrip, shareTrip };
