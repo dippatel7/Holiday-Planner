@@ -1,94 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axiosInstance from '../axiosConfig';
 
 const Profile = () => {
-  const { user } = useAuth(); // Access user token from context
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    university: '',
-    address: '',
-  });
-  const [loading, setLoading] = useState(false);
+  const { user, token } = useAuth();
+  const [name, setName] = useState(user?.name || '');
 
-  useEffect(() => {
-    // Fetch profile data from the backend
-    const fetchProfile = async () => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.get('/api/auth/profile', {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-        setFormData({
-          name: response.data.name,
-          email: response.data.email,
-          university: response.data.university || '',
-          address: response.data.address || '',
-        });
-      } catch (error) {
-        alert('Failed to fetch profile. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user) fetchProfile();
-  }, [user]);
-
-  const handleSubmit = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await axiosInstance.put('/api/auth/profile', formData, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      alert('Profile updated successfully!');
-    } catch (error) {
-      alert('Failed to update profile. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    await fetch('http://localhost:5001/api/users/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ name }),
+    });
+    // Update user in AuthContext if needed
   };
 
-  if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
-  }
-
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Your Profile</h1>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-bold mb-6">Profile</h2>
+      <form onSubmit={handleUpdate}>
         <input
           type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full p-2 border rounded mb-4"
         />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="University"
-          value={formData.university}
-          onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Address"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-          {loading ? 'Updating...' : 'Update Profile'}
+        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+          Update Profile
         </button>
       </form>
     </div>
