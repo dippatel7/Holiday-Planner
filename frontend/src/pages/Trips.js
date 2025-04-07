@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import TripForm from '../components/TripForm'; // Updated path
-import TripList from '../components/TripList'; // Updated path
+import TripForm from '../components/TripForm';
+import TripList from '../components/TripList';
 
 const Trips = () => {
   const { token } = useAuth();

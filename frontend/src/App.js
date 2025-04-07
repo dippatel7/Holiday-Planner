@@ -4,8 +4,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import Trips from './pages/Trips';
-import Destinations from './pages/Destinations';
-import Share from './pages/Share';
 import { useAuth } from './context/AuthContext';
 
 function App() {
@@ -21,8 +19,6 @@ function App() {
           <Route path="/register" element={user ? <Navigate to="/trips" /> : <Register />} />
           <Route path="/profile" element={user ? <Profile /> : <Navigate to="/login" />} />
           <Route path="/trips" element={user ? <Trips /> : <Navigate to="/login" />} />
-          <Route path="/destinations" element={user ? <Destinations /> : <Navigate to="/login" />} />
-          <Route path="/share" element={user ? <Share /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </Router>

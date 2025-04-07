@@ -9,7 +9,6 @@ const Login = () => {
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if user is logged in
   useEffect(() => {
     if (user) {
       navigate('/trips');
@@ -21,7 +20,6 @@ const Login = () => {
     setError('');
     try {
       await login(email, password);
-      // Navigation handled by useEffect after user state updates
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     }

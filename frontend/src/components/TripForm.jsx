@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import axiosInstance from '../axiosConfig';
+import axios from 'axios';
+
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:5001',
+});
 
 const TripForm = ({ trips, setTrips, editingTrip, setEditingTrip }) => {
-  const { user } = useAuth();
+  const { token } = useAuth();
   const [formData, setFormData] = useState({ name: '', destination: '', startDate: '', endDate: '', description: '' });
 
   useEffect(() => {
@@ -11,8 +15,8 @@ const TripForm = ({ trips, setTrips, editingTrip, setEditingTrip }) => {
       setFormData({
         name: editingTrip.name || '',
         destination: editingTrip.destination,
-        startDate: editingTrip.startDate.split('T')[0], // Format for date input
-        endDate: editingTrip.endDate.split('T')[0],     // Format for date input
+        startDate: editingTrip.startDate.split('T')[0],
+        endDate: editingTrip.endDate.split('T')[0],
         description: editingTrip.description || '',
       });
     } else {
@@ -25,12 +29,12 @@ const TripForm = ({ trips, setTrips, editingTrip, setEditingTrip }) => {
     try {
       if (editingTrip) {
         const response = await axiosInstance.put(`/api/trips/${editingTrip._id}`, formData, {
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setTrips(trips.map((trip) => (trip._id === response.data._id ? response.data : trip)));
       } else {
         const response = await axiosInstance.post('/api/trips', formData, {
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setTrips([...trips, response.data]);
       }
@@ -61,7 +65,6 @@ const TripForm = ({ trips, setTrips, editingTrip, setEditingTrip }) => {
       />
       <input
         type="date"
-        placeholder="Start Date"
         value={formData.startDate}
         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
         className="w-full mb-4 p-2 border rounded"
@@ -69,7 +72,6 @@ const TripForm = ({ trips, setTrips, editingTrip, setEditingTrip }) => {
       />
       <input
         type="date"
-        placeholder="End Date"
         value={formData.endDate}
         onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
         className="w-full mb-4 p-2 border rounded"

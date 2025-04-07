@@ -1,13 +1,17 @@
 import { useAuth } from '../context/AuthContext';
-import axiosInstance from '../axiosConfig';
+import axios from 'axios';
+
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:5001',
+});
 
 const TripList = ({ trips, setTrips, setEditingTrip }) => {
-  const { user } = useAuth();
+  const { token } = useAuth();
 
   const handleDelete = async (tripId) => {
     try {
       await axiosInstance.delete(`/api/trips/${tripId}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setTrips(trips.filter((trip) => trip._id !== tripId));
     } catch (error) {

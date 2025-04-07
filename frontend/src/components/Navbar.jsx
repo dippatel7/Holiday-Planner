@@ -18,28 +18,10 @@ const Navbar = () => {
       <div className="flex items-center space-x-4">
         {user ? (
           <>
-            <Link
-              to="/trips"
-              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
-            >
+            <Link to="/trips" className="text-lg hover:text-blue-200 hover:underline transition duration-200">
               My Trips
             </Link>
-            <Link
-              to="/destinations"
-              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
-            >
-              Destinations
-            </Link>
-            <Link
-              to="/share"
-              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
-            >
-              Share Plans
-            </Link>
-            <Link
-              to="/profile"
-              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
-            >
+            <Link to="/profile" className="text-lg hover:text-blue-200 hover:underline transition duration-200">
               Profile
             </Link>
             <button
@@ -51,10 +33,7 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link
-              to="/login"
-              className="text-lg hover:text-blue-200 hover:underline transition duration-200"
-            >
+            <Link to="/login" className="text-lg hover:text-blue-200 hover:underline transition duration-200">
               Login
             </Link>
             <Link
@@ -71,4 +50,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
