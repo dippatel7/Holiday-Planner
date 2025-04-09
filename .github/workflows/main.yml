@@ -31,6 +31,7 @@ jobs:
       env:
         MONGO_URI: ${{ secrets.MONGO_URI }}
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        PORT: ${{ secrets.PORT }}
     
     - name: Install Frontend Dependencies
       run: |
@@ -43,18 +44,37 @@ jobs:
         export NODE_OPTIONS=--openssl-legacy-provider
         npm run build
     
+    - name: Setup Backend Environment
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd backend
+        echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+        echo "PORT=${{ secrets.PORT }}" >> .env
+    
+    - name: Setup Frontend Environment
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd frontend
+        echo "REACT_APP_API_URL=http://localhost:${{ secrets.PORT }}" > .env
+        echo "REACT_APP_API_URL_PROD=https://your-backend-url.com" >> .env
+    
     - name: Deploy Backend
       if: github.ref == 'refs/heads/main'
       run: |
         cd backend
-        npm install -g railway
-        railway login --token ${{ secrets.RAILWAY_TOKEN }}
-        railway up
+        npm run build
+        # Add your backend deployment commands here
+        # For example, if using PM2:
+        # npm install -g pm2
+        # pm2 start server.js --name "task-manager-backend"
     
     - name: Deploy Frontend
       if: github.ref == 'refs/heads/main'
       run: |
         cd frontend
-        npm install -g vercel
-        export NODE_OPTIONS=--openssl-legacy-provider
-        vercel --token ${{ secrets.VERCEL_TOKEN }} --prod 
+        npm run build
+        # Add your frontend deployment commands here
+        # For example, if using a static file server:
+        # npm install -g serve
+        # serve -s build 
