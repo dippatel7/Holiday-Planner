@@ -13,6 +13,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    environment: MONGO_URI
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -42,9 +43,10 @@ jobs:
         working-directory: backend
         run: |
           echo "Running backend tests..."
-          echo "MONGO_URI: $MONGO_URI"
-          echo "JWT_SECRET: $JWT_SECRET"
-          echo "PORT: $PORT"
+          echo "Checking environment variables..."
+          echo "MONGO_URI is set: $([[ ! -z "$MONGO_URI" ]] && echo 'YES' || echo 'NO')"
+          echo "JWT_SECRET is set: $([[ ! -z "$JWT_SECRET" ]] && echo 'YES' || echo 'NO')"
+          echo "PORT is set: $([[ ! -z "$PORT" ]] && echo 'YES' || echo 'NO')"
           npm test
 
       - name: Install frontend dependencies
@@ -65,6 +67,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    environment: MONGO_URI
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
