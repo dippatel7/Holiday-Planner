@@ -2,6 +2,12 @@
 
 A web-based application to help travelers plan and manage personalized holiday itineraries efficiently. Built with React, Node.js, MongoDB, and integrated with Jira for project management, SysML for requirements analysis, and GitHub for version control.
 
+## CI/CD Pipeline Status
+[![CI Pipeline](https://github.com/dippatel7/Holiday-Planner/actions/workflows/ci.yml/badge.svg)](https://github.com/dippatel7/Holiday-Planner/actions/workflows/ci.yml)
+[![CD Pipeline](https://github.com/dippatel7/Holiday-Planner/actions/workflows/cd.yml/badge.svg)](https://github.com/dippatel7/Holiday-Planner/actions/workflows/cd.yml)
+
+#test
+
 
 ## Project Overview
 The **Holiday Planner** is a full-stack CRUD application designed to simplify holiday planning. Users can sign up, log in, create and manage trip itineraries, update profiles, and explore destination recommendations. This project follows Software Development Life Cycle (SDLC) best practices, leveraging Agile methodologies with Jira, requirements modeling with SysML, and DevOps practices with GitHub.
