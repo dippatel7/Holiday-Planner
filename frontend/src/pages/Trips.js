@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import TripForm from '../components/TripForm';
 import TripList from '../components/TripList';
@@ -8,11 +8,7 @@ const Trips = () => {
   const [trips, setTrips] = useState([]);
   const [editingTrip, setEditingTrip] = useState(null);
 
-  useEffect(() => {
-    fetchTrips();
-  }, []);
-
-  const fetchTrips = async () => {
+  const fetchTrips = useCallback(async () => {
     try {
       const res = await fetch('http://localhost:5001/api/trips', {
         headers: { Authorization: `Bearer ${token}` },
@@ -23,7 +19,11 @@ const Trips = () => {
     } catch (error) {
       console.error('Error fetching trips:', error.message);
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchTrips();
+  }, [fetchTrips]);
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-lg shadow-lg">
