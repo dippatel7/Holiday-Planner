@@ -1,32 +1,28 @@
 {
-  "name": "task-manager-backend",
+  "name": "holiday-planner-backend",
   "version": "1.0.0",
-  "description": "Backend for Task Manager App",
+  "description": "Backend service for Holiday Planner application",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha test/*.js --timeout 30000 --exit",
     "start": "node server.js",
-    "build": "echo 'Backend build completed'",
     "dev": "nodemon server.js",
-    "prod": "node server.js"
+    "test": "mocha --exit"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2",
-    "chai": "^4.5.0",
-    "chai-http": "^4.3.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^6.13.8",
-    "request": "^2.88.2",
-    "swagger-ui-express": "^4.6.2",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "swagger-ui-express": "^5.0.0",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
-    "mocha": "^11.0.1",
-    "nodemon": "^2.0.15",
-    "sinon": "^19.0.5"
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nodemon": "^3.1.9",
+    "sinon": "^15.0.3"
   },
   "author": "Task Manager Team",
   "license": "ISC"
