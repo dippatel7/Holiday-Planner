@@ -4,7 +4,7 @@
   "description": "Backend for Task Manager App",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --require esm --timeout 10000",
+    "test": "mocha test/*.js --timeout 10000",
     "start": "node server.js",
     "build": "echo 'Backend build completed'",
     "dev": "nodemon server.js",
@@ -22,7 +22,6 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "esm": "^3.2.25",
     "mocha": "^11.0.1",
     "nodemon": "^2.0.15",
     "sinon": "^19.0.5"
