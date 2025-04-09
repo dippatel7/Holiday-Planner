@@ -40,6 +40,7 @@ jobs:
     - name: Build Frontend
       run: |
         cd frontend
+        export NODE_OPTIONS=--openssl-legacy-provider
         npm run build
     
     - name: Deploy Backend
@@ -55,4 +56,5 @@ jobs:
       run: |
         cd frontend
         npm install -g vercel
+        export NODE_OPTIONS=--openssl-legacy-provider
         vercel --token ${{ secrets.VERCEL_TOKEN }} --prod 
