@@ -13,6 +13,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      PORT: ${{ secrets.PORT }}
+      NODE_ENV: test
 
     steps:
       - name: Checkout code
@@ -37,12 +42,10 @@ jobs:
         working-directory: backend
         run: |
           echo "Running backend tests..."
+          echo "MONGO_URI: $MONGO_URI"
+          echo "JWT_SECRET: $JWT_SECRET"
+          echo "PORT: $PORT"
           npm test
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          PORT: ${{ secrets.PORT }}
-          NODE_ENV: test
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -62,6 +65,11 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      PORT: ${{ secrets.PORT }}
+      NODE_ENV: production
 
     steps:
       - name: Checkout code
@@ -81,11 +89,6 @@ jobs:
         run: |
           npm ci
           echo "Backend build successful"
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          PORT: ${{ secrets.PORT }}
-          NODE_ENV: production
 
       - name: Build frontend
         working-directory: frontend
