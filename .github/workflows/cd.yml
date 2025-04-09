@@ -1,0 +1,148 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    branches: [main, develop]
+    types: 
+      - completed
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'develop' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Dependencies
+        run: |
+          cd backend
+          npm ci
+          cd ../frontend
+          npm ci
+          
+      - name: Build for Production
+        run: |
+          cd frontend
+          npm run build
+          
+      - name: Deploy to Staging Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/holidayplanner
+            git pull origin develop
+            cd backend
+            npm ci
+            pm2 restart holidayplanner-api
+            cd ../frontend
+            npm ci
+            npm run build
+            
+      - name: Run Integration Tests in Staging
+        run: |
+          echo "Running integration tests in staging environment"
+          # Add your integration test commands here
+          
+      - name: Run Performance Tests
+        run: |
+          echo "Running performance tests in staging environment"
+          # Add your performance test commands here
+          
+  deploy-production:
+    name: Deploy to Production
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://13.236.135.130/
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install Dependencies
+        run: |
+          cd backend
+          npm ci
+          cd ../frontend
+          npm ci
+          
+      - name: Build for Production
+        run: |
+          cd frontend
+          npm run build
+          
+      - name: Prepare Blue Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /var/www/holidayplanner-blue
+            
+      - name: Deploy to Blue Environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/holidayplanner-blue
+            git pull origin main
+            cd backend
+            npm ci
+            cd ../frontend
+            npm ci
+            npm run build
+            
+      - name: Switch to Blue Environment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www
+            rm -rf holidayplanner-green
+            mv holidayplanner holidayplanner-green
+            mv holidayplanner-blue holidayplanner
+            cd holidayplanner/backend
+            pm2 restart holidayplanner-api
+            
+      - name: Verify Deployment
+        run: |
+          echo "Verifying deployment..."
+          curl -sSf http://13.236.135.130/ || (echo "Deployment verification failed, rolling back" && exit 1)
+          
+      - name: Rollback on Failure
+        if: failure()
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www
+            rm -rf holidayplanner-blue
+            mv holidayplanner holidayplanner-blue
+            mv holidayplanner-green holidayplanner
+            cd holidayplanner/backend
+            pm2 restart holidayplanner-api 

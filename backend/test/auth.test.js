@@ -1,12 +1,22 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
+const mongoose = require('mongoose');
 const app = require('../server');
 const User = require('../models/User');
+const connectDB = require('../config/db');
 
 chai.use(chaiHttp);
 const expect = chai.expect;
 
 describe('Authentication API', () => {
+  before(async () => {
+    await connectDB();
+  });
+
+  after(async () => {
+    await mongoose.connection.close();
+  });
+
   beforeEach(async () => {
     // Clear the users collection before each test
     await User.deleteMany({});

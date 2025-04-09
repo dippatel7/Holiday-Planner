@@ -4,7 +4,7 @@
   "description": "Backend for Task Manager App",
   "main": "server.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha test/*.js --timeout 10000 --exit",
+    "test": "NODE_ENV=test mocha test/*.js --timeout 30000 --exit",
     "start": "node server.js",
     "build": "echo 'Backend build completed'",
     "dev": "nodemon server.js",
@@ -19,7 +19,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^6.13.8",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "swagger-ui-express": "^4.6.2",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "mocha": "^11.0.1",

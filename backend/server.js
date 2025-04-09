@@ -5,6 +5,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
 
 // Load environment variables based on NODE_ENV
 const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
@@ -39,6 +42,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Load Swagger document
+const swaggerDocument = YAML.load(path.join(__dirname, './api-docs.yaml'));
+
+// Serve API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/holidays', require('./routes/holidayRoutes'));
@@ -46,10 +55,10 @@ app.use('/api/trips', require('./routes/tripRoutes'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({ 
+  res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    uptime: process.uptime()
   });
 });
 
@@ -58,7 +67,7 @@ app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(500).json({
     error: 'Something went wrong!',
-    message: err.message
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
@@ -83,6 +92,7 @@ if (require.main === module) {
         console.log(`- Auth: http://127.0.0.1:${PORT}/api/auth`);
         console.log(`- Holidays: http://127.0.0.1:${PORT}/api/holidays`);
         console.log(`- Trips: http://127.0.0.1:${PORT}/api/trips`);
+        console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
       });
 
       // Handle server errors
@@ -93,6 +103,7 @@ if (require.main === module) {
           server.listen(newPort, '127.0.0.1', () => {
             console.log(`Server is running on http://127.0.0.1:${newPort}`);
             console.log(`Health check: http://127.0.0.1:${newPort}/health`);
+            console.log(`API Documentation available at http://localhost:${newPort}/api-docs`);
           });
         } else {
           console.error('Server error:', error);

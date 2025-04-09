@@ -1,80 +1,92 @@
-name: Backend CI
+name: CI Pipeline
 
 on:
   push:
     branches:
-      - main  # Trigger CI on pushes to the main branch
-
+      - main
+      - develop
+      - holidayfeatures
+  pull_request:
+    branches:
+      - main
+      - develop
+      - holidayfeatures
 
 jobs:
   test:
-    name: Run Tests
-    runs-on: self-hosted
-
-    strategy:
-      matrix:
-        node-version: [22] # Test on multiple Node.js versions
-
-
-    environment: MONGO_URI
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Set up Node.js
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - name: Print Env Secret
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          npm ci
+          echo "Backend dependencies installed successfully"
 
-      env:
-        MONGO_URI: ${{ secrets.MONGO_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        PORT: ${{ secrets.PORT }}
-      run: | 
-        echo "Secret 1 is: $MONGO_URI"
-        echo "Secret 2 is: $JWT_SECRET"
-        echo "Secret 3 is: $PORT"
-      
-    - run: pm2 stop all
+      - name: Run backend tests
+        working-directory: backend
+        run: |
+          echo "Running backend tests..."
+          npm test
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
+          NODE_ENV: test
 
-    # Install dependencies for backend
-    - name: Install Backend Dependencies
-      working-directory: ./backend
-      run: | 
-       npm install --global yarn
-       yarn --version
-       yarn install
-      
-    # Install dependencies for frontend
-    - name: Install Frontend Dependencies
-      working-directory: ./frontend
-      run: |
-        df -h
-        sudo rm -rf ./build
-        yarn install
-        yarn run build
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: |
+          npm ci
+          echo "Frontend dependencies installed successfully"
 
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          echo "Building frontend..."
+          npm run build
+        env:
+          REACT_APP_API_URL: http://localhost:${{ secrets.PORT }}
 
-    # Run backend tests
-    - name: Run Backend Tests
-      env:
-        MONGO_URI: ${{ secrets.MONGO_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        PORT: ${{ secrets.PORT }}
-      working-directory: ./backend
-      run: npm test
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
 
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - run: npm ci
-    - run: | 
-        cd ./backend
-        touch .env
-        echo "${{ secrets.PROD }}" > .env
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
 
-    - run: pm2 start all
+      - name: Build backend
+        working-directory: backend
+        run: |
+          npm ci
+          echo "Backend build successful"
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          PORT: ${{ secrets.PORT }}
 
-    - run: pm2 restart all
+      - name: Build frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+          echo "Frontend build successful"
+        env:
+          REACT_APP_API_URL: http://localhost:${{ secrets.PORT }}
