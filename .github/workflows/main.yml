@@ -1,0 +1,58 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm ci
+    
+    - name: Run Backend Tests
+      run: |
+        cd backend
+        npm test
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm ci
+    
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+    
+    - name: Deploy Backend
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd backend
+        npm install -g railway
+        railway login --token ${{ secrets.RAILWAY_TOKEN }}
+        railway up
+    
+    - name: Deploy Frontend
+      if: github.ref == 'refs/heads/main'
+      run: |
+        cd frontend
+        npm install -g vercel
+        vercel --token ${{ secrets.VERCEL_TOKEN }} --prod 
