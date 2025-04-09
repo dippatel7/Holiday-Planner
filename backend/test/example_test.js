@@ -1,14 +1,19 @@
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const http = require('http');
-const app = require('../server'); 
-const connectDB = require('../config/db');
+const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const sinon = require('sinon');
-const Task = require('../models/Task');
-const { updateTask,getTasks,addTask,deleteTask } = require('../controllers/taskController');
 const { expect } = chai;
+
+// Load test environment variables
+dotenv.config({ path: '.env.test' });
+
+// Import app and other dependencies after loading env
+const app = require('../server');
+const connectDB = require('../config/db');
+const Task = require('../models/Task');
+const { updateTask, getTasks, addTask, deleteTask } = require('../controllers/taskController');
 
 chai.use(chaiHttp);
 let server;
