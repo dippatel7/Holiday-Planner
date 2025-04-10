@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.set('strictQuery', false);
+mongoose.set('strictQuery', true);
 
 const express = require('express');
 const dotenv = require('dotenv');
